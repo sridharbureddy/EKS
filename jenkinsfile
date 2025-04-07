@@ -12,7 +12,7 @@ pipeline {
         }
       stage ('Build') {
           steps {
-            sh 'docker build -t planmytravel:latest .'           
+            sh 'docker build -t matmari:latest .'           
             }
       }
     // Building Docker images
@@ -26,10 +26,10 @@ pipeline {
    
     // Uploading Docker images into AWS ECRf
       stage('Pushing to ECR') {
-         steps{  
-            script {
-                  sh 'aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 959711113356.dkr.ecr.ap-south-1.amazonaws.com'
-                  sh 'docker push 959711113356.dkr.ecr.ap-south-1.amazonaws.com/planmytravel:latest'
+        steps{  
+          script {
+            sh 'aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 959711113356.dkr.ecr.ap-south-1.amazonaws.com'
+            sh 'docker push 959711113356.dkr.ecr.ap-south-1.amazonaws.com/matmari:latest'
          }
         }
       }
