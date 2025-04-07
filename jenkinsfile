@@ -1,0 +1,47 @@
+pipeline {
+       agent any
+    environment {
+        registry = "959711113356.dkr.ecr.ap-south-1.amazonaws.com/matmari"
+    }
+   
+    stages {
+        stage('Cloning Git') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/feature']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github_cred', url: 'https://github.com/sridharbureddy/EKS.git']]])     
+            }
+        }
+      stage ('Build') {
+          steps {
+            sh 'docker build -t matmari:latest .'           
+            }
+      }
+    // Building Docker images
+    stage('Building image') {
+      steps{
+        script {
+          dockerImage = docker.build registry 
+        }
+      }
+    }
+   
+    // Uploading Docker images into AWS ECR
+    stage('Pushing to ECR') {
+     steps{  
+         script {
+                sh 'aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 959711113356.dkr.ecr.ap-south-1.amazonaws.com'
+                sh 'docker push 959711113356.dkr.ecr.ap-south-1.amazonaws.com/matmari:latest'
+         }
+        }
+      }
+
+       stage('K8S Deploy') {
+        steps{   
+            script {
+                withKubeConfig([credentialsId: 'K8S', serverUrl: '']) {
+                sh ('kubectl apply -f eks-deploy-k8s.yaml')
+                }
+            }
+        }
+       }
+    }
+}
