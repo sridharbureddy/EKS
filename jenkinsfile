@@ -16,20 +16,20 @@ pipeline {
             }
       }
     // Building Docker images
-    stage('Building image') {
-      steps{
-        script {
-          dockerImage = docker.build registry 
+      stage('Building image') {
+        steps{
+          script {
+            dockerImage = docker.build registry 
         }
       }
     }
    
     // Uploading Docker images into AWS ECRf
-    stage('Pushing to ECR') {
-     steps{  
-         script {
-                sh 'aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 959711113356.dkr.ecr.ap-south-1.amazonaws.com'
-                sh 'docker push 959711113356.dkr.ecr.ap-south-1.amazonaws.com/matmari:latest'
+      stage('Pushing to ECR') {
+         steps{  
+            script {
+                  sh 'aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 959711113356.dkr.ecr.ap-south-1.amazonaws.com'
+                  sh 'docker push 959711113356.dkr.ecr.ap-south-1.amazonaws.com/matmari:latest'
          }
         }
       }
