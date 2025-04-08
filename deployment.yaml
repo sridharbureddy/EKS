@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: matmari
+  template:
+    metadata:
+      labels:
+        app: matmari
+    spec:
+      containers:
+      - name: matmari-container
+        image: 959711113356.dkr.ecr.ap-south-1.amazonaws.com/matmari:latest
+        ports:
+        - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-world-service
+spec:
+  selector:
+    app: matmari
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+  type: LoadBalancer
